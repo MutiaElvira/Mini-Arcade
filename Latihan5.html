@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Muteyyis`s mini arcade! 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    background:#ffd6ec;
+    font-family:'Press Start 2P', cursive;
+    text-align:center;
+    color:#ff4da6;
+    overflow:hidden;
+}
+
+h1{
+    font-size:14px;
+    margin:15px;
+}
+
+button{
+    font-family:'Press Start 2P', cursive;
+    font-size:9px;
+    padding:10px;
+    margin:5px;
+    border:none;
+    background:#ff8fcf;
+    color:white;
+    cursor:pointer;
+}
+button:hover{ background:#ff4da6; }
+
+.section{ display:none; }
+
+.pixel-box{
+    border:3px solid #ff4da6;
+    padding:15px;
+    margin:10px auto;
+    width:80%;
+    background:#ffe6f5;
+}
+
+.footer{
+    font-size:9px;
+    margin-top:20px;
+    color:#aa3377;
+}
+
+/* ===== WELCOME BOX ===== */
+#welcome{
+    position:fixed;
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#ffd6ec;
+}
+
+.welcome-box{
+    background:#ffe6f5;
+    border:4px solid #ff4da6;
+    padding:30px;
+    width:320px;
+    box-shadow:0 0 25px #ff8fcf;
+    animation:floaty 2s ease-in-out infinite alternate;
+}
+
+.welcome-title{
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+.start-btn{
+    margin-top:15px;
+    background:#ff4da6;
+}
+.start-btn:hover{
+    background:#ff1a8c;
+}
+
+@keyframes floaty{
+    from{ transform:translateY(0px); }
+    to{ transform:translateY(-12px); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 💖 WELCOME SCREEN -->
+<div id="welcome">
+    <div class="welcome-box">
+        <div class="welcome-title">
+             Hai, terima kasih sudah bermain. Hope u enjoy! 💖
+        </div>
+        <div style="font-size:8px; margin-bottom:15px;">
+            ~ Mutey belajar Ngoding! 🍿 ~
+        </div>
+        <button class="start-btn" onclick="startGame()">START GAME 🎮</button>
+    </div>
+</div>
+
+<!-- 🎮 MAIN TITLE -->
+<h1 id="mainTitle" style="display:none;">💖 Mini Arcade 🎮</h1>
+
+<!-- 🎮 MENU -->
+<div id="menu" style="display:none;">
+    <button onclick="showGame('catch')">🍎 Catch the Emoji </button>
+    <button onclick="showGame('cook')">👩🏻‍🍳 Cooking Game</button>
+</div>
+
+<!-- ================= CATCH GAME ================= -->
+<div id="catch" class="section">
+
+<h1>Hey Catch Me 🧺 </h1>
+<div id="score">Score: 0</div>
+
+<div id="catchArea" style="position:relative;height:60vh;overflow:hidden;background:#ffd6ec;"></div>
+
+<button onclick="backMenu()">⬅ Back</button>
+</div>
+
+<!-- ================= COOK GAME ================= -->
+<div id="cook" class="section">
+
+<h1>Let's Cook with Me :3</h1>
+
+<div class="pixel-box">
+💗 RULES 
+<br><br>
+• Ikuti order yang muncul  
+• Pilih bahan yang sesuai  
+• Klik SERVE 🍽  
+• Salah resep = no point 😢  
+• Kumpulkan skor tertinggi!
+</div>
+
+<div id="order">Order: 🍔</div>
+<div id="cookScore">Score: 0</div>
+
+<div style="margin-top:15px;">
+    <button onclick="addItem('🍞')">🍞</button>
+    <button onclick="addItem('🥩')">🥩</button>
+    <button onclick="addItem('🧀')">🧀</button>
+    <button onclick="addItem('🥬')">🥬</button>
+    <button onclick="addItem('🍅')">🍅</button>
+    <button onclick="addItem('🥚')">🥚</button>
+</div>
+
+<div style="margin-top:15px;">
+Plate:
+<div class="pixel-box" id="plate"></div>
+</div>
+
+<button onclick="serve()">Serve 🍽</button>
+<button onclick="backMenu()">⬅ Back</button>
+
+</div>
+
+<div class="footer" id="credit" style="display:none;">Made by Mutey 💗</div>
+
+<script>
+
+/* ===== START GAME ===== */
+function startGame(){
+    document.getElementById("welcome").style.display="none";
+    document.getElementById("menu").style.display="block";
+    document.getElementById("mainTitle").style.display="block";
+    document.getElementById("credit").style.display="block";
+}
+
+/* ================= MENU ================= */
+function showGame(game){
+    document.getElementById("menu").style.display="none";
+    document.getElementById(game).style.display="block";
+}
+
+function backMenu(){
+    document.querySelectorAll(".section").forEach(sec=>sec.style.display="none");
+    document.getElementById("menu").style.display="block";
+}
+
+/* ================= CATCH GAME ================= */
+
+let score=0;
+let speed=4000;
+const items=["⭐","🍎","🍅"];
+const catchArea=document.getElementById("catchArea");
+
+/* Basket */
+let basket=document.createElement("div");
+basket.innerHTML="🧺";
+basket.style.position="absolute";
+basket.style.bottom="10px";
+basket.style.fontSize="40px";
+basket.style.left="50%";
+catchArea.appendChild(basket);
+
+document.addEventListener("mousemove",function(e){
+    basket.style.left=e.clientX-25+"px";
+});
+
+function spawn(){
+    let item=document.createElement("div");
+    item.innerHTML=items[Math.floor(Math.random()*items.length)];
+    item.style.position="absolute";
+    item.style.top="-30px";
+    item.style.fontSize="25px";
+    item.style.left=Math.random()*window.innerWidth+"px";
+    item.style.transition="top "+speed+"ms linear";
+    catchArea.appendChild(item);
+
+    setTimeout(()=>{ item.style.top="100%"; },10);
+
+    let check=setInterval(()=>{
+        let r1=item.getBoundingClientRect();
+        let r2=basket.getBoundingClientRect();
+        if(r1.bottom>=r2.top && r1.left<r2.right && r1.right>r2.left){
+            score++;
+            document.getElementById("score").innerText="Score: "+score;
+            item.remove();
+            clearInterval(check);
+        }
+    },20);
+
+    setTimeout(()=>{item.remove(); clearInterval(check);},speed);
+}
+
+setInterval(spawn,1000);
+
+/* ================= COOK GAME ================= */
+
+let cookScore=0;
+let plate=[];
+let recipes={
+    "🍔":["🍞","🥩","🍅"],
+    "🥪":["🍞","🧀","🥬"],
+    "🍳":["🥚"],
+    "🥩🍳":["🥩","🥚"],
+    "🍞🍅":["🍞","🍅"]
+};
+
+let orderList=Object.keys(recipes);
+let currentOrder;
+
+function newOrder(){
+    currentOrder=orderList[Math.floor(Math.random()*orderList.length)];
+    document.getElementById("order").innerText="Order: "+currentOrder;
+}
+
+function addItem(item){
+    plate.push(item);
+    document.getElementById("plate").innerText=plate.join(" ");
+}
+
+function serve(){
+    let required=recipes[currentOrder];
+
+    if(required.every(r=>plate.includes(r))){
+        cookScore++;
+    }
+
+    document.getElementById("cookScore").innerText="Score: "+cookScore;
+    plate=[];
+    document.getElementById("plate").innerText="";
+    newOrder();
+}
+
+newOrder();
+
+</script>
+
+</body>
+</html>
